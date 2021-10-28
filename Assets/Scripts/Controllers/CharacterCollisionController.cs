@@ -22,16 +22,6 @@ namespace fathergame.Controllers
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.CompareTag("FatherGate"))
-            {
-                IsFather = true;
-                Camera.main.backgroundColor = new Color(142f / 255f, 198f / 255f, 233f / 255f);
-            }
-            else if (other.CompareTag("GodfatherGate"))
-            {
-                Camera.main.backgroundColor = new Color(84f / 255f, 35f / 255f, 35f / 255f);
-            }
-
             GivePoints(other.transform);
             ShouldTransform();
         }
