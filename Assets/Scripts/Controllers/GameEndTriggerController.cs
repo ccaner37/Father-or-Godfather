@@ -13,44 +13,47 @@ namespace fathergame.Controllers
         [SerializeField]
         private Transform _zombies;
 
+        private Transform _player;
+
         private void OnTriggerEnter(Collider other)
         {
             _characterCollision = other.gameObject.GetComponent<CharacterCollisionController>();
+            _player = other.transform;
             GameManager.Instance.IsGameEnded = true;
-
             StartPlayerAnimation();
-            StartCoroutine(KillZombie(other.transform));
         }
-
         private void StartPlayerAnimation()
         {
+            _characterCollision.SelectedWeapon.gameObject.SetActive(true);
             _characterCollision.ActiveCharacter.GetComponent<Animator>().SetTrigger(Animator.StringToHash("gameEnded"));
-
-            if (_characterCollision.SelectedWeapon != null)
-            {
-                _characterCollision.SelectedWeapon.gameObject.SetActive(true);
-            }
-
-            //if (_characterCollision.IsFather)
-            //{
-            //    _bible.gameObject.SetActive(true);
-            //}
-            //else
-            //{
-            //    _tommygun.gameObject.SetActive(true);
-            //}
+            CheckIsPlayerFailed();
         }
 
-        IEnumerator KillZombie(Transform player)
+        private void CheckIsPlayerFailed()
+        {
+            if (!_characterCollision.SelectedWeapon.gameObject.activeInHierarchy)
+            {
+                GameManager.Instance.IsPlayerFailed = true;
+                StartCoroutine(GameManager.Instance.LoadCurrentLevel());
+                return;
+            }
+            else
+            {
+                StartCoroutine(KillZombies());
+            }
+        }
+
+        IEnumerator KillZombies()
         {
             Camera.main.transform.parent = null;
             for (int i = 0; i < _zombies.childCount; i++)
             {
-                player.LookAt(_zombies.GetChild(i));
+                _player.LookAt(_zombies.GetChild(i));
                 yield return new WaitForSeconds(1.2f);
                 _zombies.GetChild(i).GetComponent<Animator>().SetTrigger(Animator.StringToHash("killZombie"));
             }
             _characterCollision.ActiveCharacter.GetComponent<Animator>().SetTrigger(Animator.StringToHash("zombiesDied"));
+            StartCoroutine(GameManager.Instance.LoadNextScene());
         }
     }
 }
