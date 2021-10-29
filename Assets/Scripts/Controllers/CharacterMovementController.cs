@@ -12,6 +12,8 @@ namespace fathergame.Controllers
 
         private float _forwardSpeed = 6f;
         private float _speed = 10.0f;
+        private float _rotateSpeed = 8f;
+        private float _rotateBackSpeed = 90f;
         private float _gravity = 20.0f;
         private float _distance;
 
@@ -23,7 +25,7 @@ namespace fathergame.Controllers
             controller = gameObject.GetComponent<CharacterController>();
         }
 
-        void Update()
+        void FixedUpdate()
         {
             CalculateMousePosition();
             MovePlayer();
@@ -48,10 +50,18 @@ namespace fathergame.Controllers
                 _moveDirection.y -= _gravity * Time.deltaTime;
                 controller.Move(_moveDirection * Time.deltaTime);
 
+                Transform activeCharacterTransform = ManagersHolder.PlayerTransformManager.ActiveCharacter.transform;
                 if (Input.GetMouseButton(0))
                 {
                     Vector3 followXonly = new Vector3(_targetPos.x, transform.position.y, transform.position.z);
                     transform.position = Vector3.Lerp(transform.position, followXonly, _speed * Time.deltaTime);
+
+                    Vector3 rotateTowards = new Vector3(0, _targetPos.x * 55, 0);
+                    activeCharacterTransform.eulerAngles = Vector3.Lerp(transform.eulerAngles, rotateTowards, Time.deltaTime *_rotateSpeed);
+                }
+                else
+                {
+                    activeCharacterTransform.rotation = Quaternion.RotateTowards(activeCharacterTransform.rotation, Quaternion.Euler(0, 0, 0), Time.deltaTime * _rotateBackSpeed);
                 }
             }
         }

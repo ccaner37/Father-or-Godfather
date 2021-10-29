@@ -10,20 +10,11 @@ namespace fathergame.Managers
     public class UIManager : MonoBehaviour
     {
         [SerializeField]
-        private TextMeshProUGUI _levelCompletedText, _levelFailedText, _playerText;
+        private TextMeshProUGUI _levelCompletedText, _levelFailedText;
 
-        [SerializeField]
-        private Image _fillBar;
+        public TextMeshProUGUI PlayerHeadText;
 
-        private int plylevel;
-
-        Dictionary<int, string> numberNames = new Dictionary<int, string>();
-
-        private void Start()
-        {
-            numberNames.Add(1, "Father");
-            numberNames.Add(-1, "Godfather");
-        }
+        public Image FillBar;
 
         public void EnableLevelCompletedText()
         {
@@ -37,27 +28,9 @@ namespace fathergame.Managers
 
         public void UpdateFillBar()
         {
-            ManageFillBar();
+            ManagersHolder.PlayerTransformManager.ManagePlayerTransform();
             float fillAmount = Mathf.InverseLerp(0f, 10f, Mathf.Abs(GameManager.Instance.Points));
-            _fillBar.fillAmount = fillAmount;
-        }
-
-        private void ManageFillBar()
-        {
-            if (GameManager.Instance.Points >= 10) // && GameManager.Instance.IsFather
-            {
-                plylevel++;
-                _playerText.text = numberNames[plylevel];
-                _fillBar.color = Color.blue;
-                GameManager.Instance.Points -= 10;
-            }
-            else if (GameManager.Instance.Points <= -10) // && !GameManager.Instance.IsFather
-            {
-                plylevel--;
-                _playerText.text = numberNames[plylevel];
-                _fillBar.color = Color.red;
-                GameManager.Instance.Points += 10;
-            }
+            FillBar.fillAmount = fillAmount;
         }
     }
 }

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using fathergame.Managers;
 
 namespace fathergame.Controllers
 {
@@ -12,12 +13,12 @@ namespace fathergame.Controllers
 
         private void OnTriggerEnter(Collider other)
         {
-            SelectWeapon(other.transform);
+            SelectWeapon();
         }
 
-        private void SelectWeapon(Transform player)
+        private void SelectWeapon()
         {
-            player.GetComponent<CharacterCollisionController>().SelectedWeapon = _weaponWillBeGiven;
+            ManagersHolder.PlayerTransformManager.SelectedWeapon = _weaponWillBeGiven;
         }
     }
 }
